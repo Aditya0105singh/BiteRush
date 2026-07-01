@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:9090/api/orders";
+const API_URL = `${import.meta.env.VITE_API_URL}/api/orders`;
 
 export const fetchUserOrders = async (token) => {
     try {
