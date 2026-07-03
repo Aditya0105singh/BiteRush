@@ -1,0 +1,28 @@
+Steps to run the project.
+1. Download and extract the zip file
+2. Generate the api key in AWS and Razorpay
+3. Open foodiesapi folder, open application.properties
+    ${AWS_ACCESS_KEY} replace this with your access key
+    ${AWS_SECRET_KEY} replace this with your secret key
+    ${AWS_REGION} replace this with region
+    ${AWS_BUCKET_NAME} replace this with bucket name
+
+    ${JWT_SECRET} replace this with secret key (Give any long random text)
+
+    ${RAZORPAY_KEY} replace this with your razor pay key
+    ${RAZORPAY_SECRET} replace this with your razor pay secret key
+4. Create mongodb database (Ex. food_delivery_db) and replace the databse name in the spring.data.mongodb.uri
+    ex: spring.data.mongodb.uri = mongodb://localhost:27017/food_delivery_db
+5. Open the foodies folder, open contants.js and replace the "razor_pay_key" with your razor pay key
+6. Start the spring boot application, it will start on the port 8080
+7. Open adminpanel, start the application
+    npm run dev 
+8. Open the browser navigate to http://localhost:5173
+9. Open foodies, start the application
+    npm run dev
+10. Open the browser, navigate to http://localhost:5174
+
+Thank you. If you are facing any issue please open an issue in the repository.
+Happy coding!
+
+

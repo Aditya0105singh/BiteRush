@@ -1,0 +1,28 @@
+# Environment files
+**/.env
+!**/.env.example
+
+# Node
+**/node_modules/
+**/dist/
+**/.vite/
+
+# Spring Boot / Maven
+**/target/
+!**/target/*.jar
+**/*.class
+**/.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.DS_Store
+**/__MACOSX/
+
+# Logs
+*.log
+logs/
+
+# ZIP
+*.zip
