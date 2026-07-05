@@ -3,6 +3,7 @@ package com.biterush.foodiesapi.controller;
 import com.biterush.foodiesapi.io.UserRequest;
 import com.biterush.foodiesapi.io.UserResponse;
 import com.biterush.foodiesapi.service.UserService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +15,9 @@ public class UserController {
 
     private final UserService userService;
 
-
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserResponse register(@RequestBody UserRequest request) {
+    public UserResponse register(@Valid @RequestBody UserRequest request) {
         return userService.registerUser(request);
     }
 }

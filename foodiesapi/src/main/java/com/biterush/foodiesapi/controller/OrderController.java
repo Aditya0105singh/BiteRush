@@ -4,6 +4,7 @@ import com.razorpay.RazorpayException;
 import com.biterush.foodiesapi.io.OrderRequest;
 import com.biterush.foodiesapi.io.OrderResponse;
 import com.biterush.foodiesapi.service.OrderService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class OrderController {
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public OrderResponse createOrderWithPayment(@RequestBody OrderRequest request) throws RazorpayException {
+    public OrderResponse createOrderWithPayment(@Valid @RequestBody OrderRequest request) throws RazorpayException {
         OrderResponse response = orderService.createOrderWithPayment(request);
         return response;
     }
