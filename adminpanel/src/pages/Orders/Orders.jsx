@@ -2,13 +2,15 @@ import React, { useEffect, useState } from "react";
 import { assets } from "../../assets/assets";
 import { fetchAllOrders, updateOrderStatus } from "../../services/orderService";
 import { toast } from "react-toastify";
+import { useAuth } from "../../context/AuthContext";
 
 const Orders = () => {
+  const { token } = useAuth();
   const [data, setData] = useState([]);
 
   const fetchOrders = async () => {
     try {
-      const response = await fetchAllOrders();
+      const response = await fetchAllOrders(token);
       setData(response);
     } catch (error) {
       toast.error("Unable to display the orders. Please try again.");
@@ -16,7 +18,7 @@ const Orders = () => {
   };
 
   const updateStatus = async (event, orderId) => {
-    const success = await updateOrderStatus(orderId, event.target.value);
+    const success = await updateOrderStatus(orderId, event.target.value, token);
     if (success) await fetchOrders();
   };
 

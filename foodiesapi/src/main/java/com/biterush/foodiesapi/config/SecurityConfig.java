@@ -5,6 +5,7 @@ import com.biterush.foodiesapi.service.AppUserDetailsService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,7 +38,10 @@ public class SecurityConfig {
         http
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/api/register", "/api/login", "/api/foods", "/api/foods/**", "/api/orders/all", "/api/orders/status/**").permitAll()
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/register", "/api/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/foods", "/api/foods/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/orders/all").authenticated()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

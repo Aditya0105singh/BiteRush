@@ -1,10 +1,11 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "./ListFood.css";
 import { deleteFood, getFoodList } from "../../services/foodService";
+import { useAuth } from "../../context/AuthContext";
 
 const ListFood = () => {
+  const { token } = useAuth();
   const [list, setList] = useState([]);
   const fetchList = async () => {
     try {
@@ -17,7 +18,7 @@ const ListFood = () => {
 
   const removeFood = async (foodId) => {
     try {
-      const success = await deleteFood(foodId);
+      const success = await deleteFood(foodId, token);
       if (success) {
         toast.success("Food removed.");
         await fetchList();

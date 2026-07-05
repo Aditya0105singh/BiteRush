@@ -51,7 +51,7 @@ public class CartServiceImpl implements CartService{
         Map<String, Integer> cartItems = entity.getItems();
         if (cartItems.containsKey(cartRequest.getFoodId())) {
             int currentQty = cartItems.get(cartRequest.getFoodId());
-            if (currentQty > 0) {
+            if (currentQty > 1) {
                 cartItems.put(cartRequest.getFoodId(), currentQty - 1);
             } else {
                 cartItems.remove(cartRequest.getFoodId());

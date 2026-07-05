@@ -2,13 +2,17 @@ import axios from "axios";
 
 const API_URL = `${import.meta.env.VITE_API_URL}/api/foods`;
 
-export const addFood = async (foodData, image) => {
+export const addFood = async (foodData, image, token) => {
     const formData = new FormData();
     formData.append('food', JSON.stringify(foodData));
-    formData.append('file', image); 
-
+    formData.append('file', image);
     try {
-        await axios.post(API_URL, formData, {headers: { "Content-Type": "multipart/form-data"}});
+        await axios.post(API_URL, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+                "Authorization": `Bearer ${token}`
+            }
+        });
     } catch (error) {
         console.log('Error', error);
         throw error;
@@ -25,9 +29,11 @@ export const getFoodList = async () => {
     }
 }
 
-export const deleteFood = async (foodId) => {
+export const deleteFood = async (foodId, token) => {
     try {
-        const response = await axios.delete(API_URL+"/"+foodId);
+        const response = await axios.delete(API_URL + "/" + foodId, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
         return response.status === 204;
     } catch (error) {
         console.log('Error while deleting the food.', error);

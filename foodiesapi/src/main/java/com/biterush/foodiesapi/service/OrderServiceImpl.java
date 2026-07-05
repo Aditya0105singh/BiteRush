@@ -12,8 +12,13 @@ import lombok.AllArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -35,21 +40,17 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public OrderResponse createOrderWithPayment(OrderRequest request) throws RazorpayException {
-        OrderEntity newOrder = convertToEntity(request);
-        newOrder = orderRepository.save(newOrder);
-
-
-        //create razorpay payment order
+        // Create Razorpay order FIRST — if this fails, nothing is saved to DB
         RazorpayClient razorpayClient = new RazorpayClient(RAZORPAY_KEY, RAZORPAY_SECRET);
         JSONObject orderRequest = new JSONObject();
-        orderRequest.put("amount", newOrder.getAmount() * 100);
+        orderRequest.put("amount", request.getAmount() * 100);
         orderRequest.put("currency", "INR");
         orderRequest.put("payment_capture", 1);
-
         Order razorpayOrder = razorpayClient.orders.create(orderRequest);
-        newOrder.setRazorpayOrderId(razorpayOrder.get("id"));
-        //newOrder.setAmount(razorpayOrder.get("amount"));
+
         String loggedInUserId = userService.findByUserId();
+        OrderEntity newOrder = convertToEntity(request);
+        newOrder.setRazorpayOrderId(razorpayOrder.get("id"));
         newOrder.setUserId(loggedInUserId);
         newOrder = orderRepository.save(newOrder);
         return convertToResponse(newOrder);
@@ -58,14 +59,45 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public void verifyPayment(Map<String, String> paymentData, String status) {
         String razorpayOrderId = paymentData.get("razorpay_order_id");
+        String razorpayPaymentId = paymentData.get("razorpay_payment_id");
+        String razorpaySignature = paymentData.get("razorpay_signature");
+
+        // Verify HMAC-SHA256 signature: HMAC(orderId + "|" + paymentId, secret)
+        String expectedSignature = computeHmacSha256(razorpayOrderId + "|" + razorpayPaymentId, RAZORPAY_SECRET);
+        if (!expectedSignature.equals(razorpaySignature)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid payment signature");
+        }
+
         OrderEntity existingOrder = orderRepository.findByRazorpayOrderId(razorpayOrderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
+
+        // Ownership check — only the order owner can verify payment
+        String loggedInUserId = userService.findByUserId();
+        if (!existingOrder.getUserId().equals(loggedInUserId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
+        }
+
         existingOrder.setPaymentStatus(status);
-        existingOrder.setRazorpaySignature(paymentData.get("razorpay_signature"));
-        existingOrder.setRazorpayPaymentId(paymentData.get("razorpay_payment_id"));
+        existingOrder.setRazorpaySignature(razorpaySignature);
+        existingOrder.setRazorpayPaymentId(razorpayPaymentId);
         orderRepository.save(existingOrder);
-        if ("paid".equalsIgnoreCase(status)) {
+        if ("Paid".equalsIgnoreCase(status)) {
             cartRespository.deleteByUserId(existingOrder.getUserId());
+        }
+    }
+
+    private String computeHmacSha256(String data, String secret) {
+        try {
+            Mac mac = Mac.getInstance("HmacSHA256");
+            mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+            byte[] hash = mac.doFinal(data.getBytes(StandardCharsets.UTF_8));
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hash) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Signature computation failed");
         }
     }
 

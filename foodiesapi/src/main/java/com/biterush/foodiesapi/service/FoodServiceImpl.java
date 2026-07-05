@@ -35,7 +35,11 @@ public class FoodServiceImpl implements FoodService{
 
     @Override
     public String uploadFile(MultipartFile file) {
-        String filenameExtension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")+1);
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null || !originalFilename.contains(".")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid file: missing filename or extension");
+        }
+        String filenameExtension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
         String key = UUID.randomUUID().toString()+"."+filenameExtension;
         try {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
