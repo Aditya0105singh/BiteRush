@@ -4,14 +4,13 @@ import "./Header.css";
 
 const Header = () => {
   return (
-    <div className="p-5 mb-4 bg-light rounded-3 mt-1 header">
-      <div className="container-fluid py-5">
-        <h1 className="display-5 fw-bold">Order your favorite food here</h1>
-        <p className="col-md-8 fs-4">
-          Discover the best food and drinks in Bengaluru
-        </p>
-        <Link to="/explore" className="btn btn-primary">
-          Explore
+    <div className="header">
+      <div className="header-content">
+        <span className="header-badge">🍽️ Free delivery on first order</span>
+        <h1>Craving something<br />delicious?</h1>
+        <p>Fresh meals delivered fast — straight to your door.</p>
+        <Link to="/explore" className="btn-hero">
+          Explore Menu <i className="bi bi-arrow-right ms-1"></i>
         </Link>
       </div>
     </div>

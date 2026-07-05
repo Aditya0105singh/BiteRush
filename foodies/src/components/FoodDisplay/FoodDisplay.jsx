@@ -14,12 +14,13 @@ const FoodDisplay = ({category, searchText}) => {
         <div className="row">
             {filteredFoods.length > 0 ? (
                 filteredFoods.map((food, index) => (
-                    <FoodItem key={index} 
-                        name={food.name} 
+                    <FoodItem key={index}
+                        name={food.name}
                         description={food.description}
                         id={food.id}
                         imageUrl={food.imageUrl}
-                        price={food.price} />
+                        price={food.price}
+                        category={food.category} />
                 ))
             ) : (
                 <div className="text-center mt-4">

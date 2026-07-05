@@ -21,52 +21,57 @@ const MyOrders = () => {
     }
   }, [token]);
 
+  const getStatusClass = (status) => {
+    if (!status) return 'status-default';
+    const s = status.toLowerCase();
+    if (s === 'delivered') return 'status-delivered';
+    if (s === 'processing') return 'status-processing';
+    if (s === 'preparing') return 'status-preparing';
+    if (s === 'pending') return 'status-pending';
+    if (s === 'cancelled') return 'status-cancelled';
+    return 'status-default';
+  };
+
   return (
-    <div className="container">
-      <div className="py-5 row justify-content-center">
-        <div className="col-11 card">
-          <table className="table table-responsive">
-            <tbody>
-              {data.map((order, index) => {
-                return (
-                  <tr key={index}>
-                    <td>
-                      <img
-                        src={assets.delivery}
-                        alt=""
-                        height={48}
-                        width={48}
-                      />
-                    </td>
-                    <td>
-                      {order.orderedItems.map((item, index) => {
-                        if (index === order.orderedItems.length - 1) {
-                          return item.name + " x " + item.quantity;
-                        } else {
-                          return item.name + " x " + item.quantity + ", ";
-                        }
-                      })}
-                    </td>
-                    <td>&#x20B9;{order.amount.toFixed(2)}</td>
-                    <td>Items: {order.orderedItems.length}</td>
-                    <td className="fw-bold text-capitalize">
-                      &#x25cf;{order.orderStatus}
-                    </td>
-                    <td>
-                      <button
-                        className="btn btn-sm btn-warning"
-                        onClick={fetchOrders}
-                      >
-                        <i className="bi bi-arrow-clockwise"></i>
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+    <div className="container py-5">
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h3 className="fw-bold mb-0">My Orders</h3>
+        <button className="refresh-btn" onClick={fetchOrders}>
+          <i className="bi bi-arrow-clockwise me-1"></i>Refresh
+        </button>
       </div>
+
+      {data.length === 0 ? (
+        <div className="empty-orders">
+          <i className="bi bi-bag-x"></i>
+          <h5>No orders yet</h5>
+          <p className="text-muted">When you place an order it will appear here.</p>
+        </div>
+      ) : (
+        data.map((order, index) => (
+          <div key={index} className="order-card card">
+            <div className="order-card-header">
+              <div>
+                <span className="order-id">#{order.id?.slice(-8).toUpperCase()}</span>
+                <div className="order-items-text mt-1">
+                  {order.orderedItems.map((item, i) => (
+                    <span key={i}>{item.name} ×{item.quantity}{i < order.orderedItems.length - 1 ? ', ' : ''}</span>
+                  ))}
+                </div>
+              </div>
+              <div className="d-flex flex-column align-items-end gap-1">
+                <span className="order-amount">&#8377;{order.amount?.toFixed(2)}</span>
+                <span className={`status-badge ${getStatusClass(order.orderStatus)}`}>
+                  {order.orderStatus || 'Pending'}
+                </span>
+                <span className={`payment-badge ${order.paymentStatus === 'Paid' ? 'payment-paid' : 'payment-unpaid'}`}>
+                  {order.paymentStatus === 'Paid' ? '✓ Paid' : '✗ Unpaid'}
+                </span>
+              </div>
+            </div>
+          </div>
+        ))
+      )}
     </div>
   );
 };

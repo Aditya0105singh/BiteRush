@@ -20,19 +20,14 @@ const Menubar = () => {
     navigate("/");
   };
   return (
-    <nav className="navbar navbar-expand-lg bg-body-tertiary">
+    <nav className="navbar navbar-expand-lg br-navbar">
       <div className="container">
-        <Link to="/">
-          <img
-            src={assets.logo}
-            alt=""
-            className="mx-4"
-            height={48}
-            width={48}
-          />
+        <Link to="/" className="navbar-brand d-flex align-items-center gap-2">
+          <img src={assets.logo} alt="BiteRush" height={40} width={40} />
+          <span className="fw-bold fs-5" style={{ color: 'var(--br-orange)' }}>BiteRush</span>
         </Link>
         <button
-          className="navbar-toggler"
+          className="navbar-toggler border-0"
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#navbarSupportedContent"
@@ -43,99 +38,50 @@ const Menubar = () => {
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+          <ul className="navbar-nav me-auto mb-2 mb-lg-0 gap-1">
             <li className="nav-item">
-              <Link
-                className={
-                  active === "home" ? "nav-link fw-bold active" : "nav-link"
-                }
-                to="/"
-                onClick={() => setActive("home")}
-              >
+              <Link className={`nav-link ${active === 'home' ? 'active' : ''}`} to="/" onClick={() => setActive('home')}>
                 Home
               </Link>
             </li>
             <li className="nav-item">
-              <Link
-                className={
-                  active === "explore" ? "nav-link fw-bold active" : "nav-link"
-                }
-                to="/explore"
-                onClick={() => setActive("explore")}
-              >
+              <Link className={`nav-link ${active === 'explore' ? 'active' : ''}`} to="/explore" onClick={() => setActive('explore')}>
                 Explore
               </Link>
             </li>
             <li className="nav-item">
-              <Link
-                className={
-                  active === "contact-us"
-                    ? "nav-link fw-bold active"
-                    : "nav-link"
-                }
-                to="/contact"
-                onClick={() => setActive("contact-us")}
-              >
-                Contact us
+              <Link className={`nav-link ${active === 'contact-us' ? 'active' : ''}`} to="/contact" onClick={() => setActive('contact-us')}>
+                Contact
               </Link>
             </li>
           </ul>
-          <div className="d-flex align-items-center gap-4">
-            <Link to={`/cart`}>
-              <div className="position-relative">
-                <img
-                  src={assets.cart}
-                  alt=""
-                  height={28}
-                  width={28}
-                  className="position-relative"
-                />
-                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning">
+          <div className="d-flex align-items-center gap-3">
+            <Link to="/cart" className="text-decoration-none position-relative">
+              <i className="bi bi-bag fs-5" style={{ color: '#444' }}></i>
+              {uniqueItemsInCart > 0 && (
+                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill cart-badge">
                   {uniqueItemsInCart}
                 </span>
-              </div>
+              )}
             </Link>
             {!token ? (
               <>
-                <button
-                  className="btn btn-outline-primary btn-sm"
-                  onClick={() => navigate("/login")}
-                >
-                  Login
-                </button>
-                <button
-                  className="btn btn-outline-success btn-sm"
-                  onClick={() => navigate("/register")}
-                >
-                  Register
-                </button>
+                <button className="btn btn-nav-login" onClick={() => navigate('/login')}>Login</button>
+                <button className="btn btn-nav-register" onClick={() => navigate('/register')}>Register</button>
               </>
             ) : (
-              <div className="dropdown text-end">
-                <a
-                  href="#"
-                  className="d-block link-body-emphasis text-decoration-none dropdown-toggle"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  <img
-                    src={assets.profile}
-                    alt=""
-                    width={32}
-                    height={32}
-                    className="rounded-circle"
-                  />
+              <div className="dropdown">
+                <a href="#" className="d-flex align-items-center gap-2 text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+                  <img src={assets.profile} alt="" width={34} height={34} className="rounded-circle border border-2" style={{ borderColor: 'var(--br-orange) !important' }} />
                 </a>
-                <ul className="dropdown-menu text-small">
-                  <li
-                    className="dropdown-item"
-                    onClick={() => navigate("/myorders")}
-                  >
-                    Orders
-                  </li>
-                  <li className="dropdown-item" onClick={logout}>
-                    Logout
-                  </li>
+                <ul className="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2">
+                  <li><span className="dropdown-item" onClick={() => navigate('/myorders')}>
+                    <i className="bi bi-bag-check me-2"></i>My Orders
+                  </span></li>
+                  <li><hr className="dropdown-divider" /></li>
+                  <li><span className="dropdown-item text-danger" onClick={logout}>
+                    <i className="bi bi-box-arrow-right me-2"></i>Logout
+                  </span></li>
                 </ul>
               </div>
             )}

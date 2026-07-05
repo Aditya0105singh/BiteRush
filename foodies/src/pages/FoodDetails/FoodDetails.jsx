@@ -30,33 +30,61 @@ const FoodDetails = () => {
   };
   return (
     <section className="py-5">
-      <div className="container px-4 px-lg-5 my-5">
-        <div className="row gx-4 gx-lg-5 align-items-center">
-          <div className="col-md-6">
+      <div className="container px-4 px-lg-5 my-3">
+        <div className="row gx-5 align-items-center">
+          <div className="col-md-6 mb-4 mb-md-0">
             <img
-              className="card-img-top mb-5 mb-md-0"
               src={data.imageUrl}
-              alt="..."
+              alt={data.name}
+              style={{
+                width: '100%',
+                height: '380px',
+                objectFit: 'cover',
+                borderRadius: '18px',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.12)'
+              }}
             />
           </div>
           <div className="col-md-6">
-            <div className="fs-5 mb-1">
-              Category:{" "}
-              <span className="badge text-bg-warning">{data.category}</span>
+            {data.category && (
+              <span style={{
+                background: 'var(--br-orange-light)',
+                color: 'var(--br-orange)',
+                borderRadius: '20px',
+                padding: '4px 14px',
+                fontSize: '0.82rem',
+                fontWeight: 600
+              }}>{data.category}</span>
+            )}
+            <h1 className="fw-bold mt-2 mb-1" style={{ fontSize: '2rem' }}>{data.name}</h1>
+            <div className="mb-2">
+              <i className="bi bi-star-fill text-warning"></i>
+              <i className="bi bi-star-fill text-warning"></i>
+              <i className="bi bi-star-fill text-warning"></i>
+              <i className="bi bi-star-fill text-warning"></i>
+              <i className="bi bi-star-half text-warning"></i>
+              <small className="text-muted ms-1">(4.5)</small>
             </div>
-            <h1 className="display-5 fw-bolder">{data.name}</h1>
-            <div className="fs-5 mb-2">
-              <span>&#8377;{data.price}.00</span>
+            <p className="text-muted mb-3">{data.description}</p>
+            <div className="d-flex align-items-center gap-3 mb-4">
+              <span style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--br-orange)' }}>
+                &#8377;{data.price}
+              </span>
             </div>
-            <p className="lead">{data.description}</p>
-            <div className="d-flex">
+            <div className="d-flex gap-3">
               <button
-                className="btn btn-outline-dark flex-shrink-0"
-                type="button"
+                style={{
+                  background: 'var(--br-orange)',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '30px',
+                  padding: '0.65rem 2rem',
+                  fontWeight: 700,
+                  fontSize: '1rem'
+                }}
                 onClick={addToCart}
               >
-                <i className="bi-cart-fill me-1"></i>
-                Add to cart
+                <i className="bi bi-cart-plus me-2"></i>Add to Cart
               </button>
             </div>
           </div>

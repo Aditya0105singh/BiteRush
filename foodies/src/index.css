@@ -1,10 +1,35 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
+:root {
+  --br-orange: #ff6b35;
+  --br-orange-light: #fff3ee;
+  --br-orange-dark: #e85d2a;
+  --br-dark: #1a1a2e;
+  --br-card-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  --br-card-shadow-hover: 0 8px 32px rgba(255,107,53,0.18);
+  --br-radius: 14px;
+}
+
 body {
-  font-family: 'poppins', sans-serif !important;
+  font-family: 'Poppins', sans-serif !important;
   margin: 0;
   padding: 0;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: #f8f9fa;
 }
+
+/* Orange accent buttons */
+.btn-orange {
+  background-color: var(--br-orange);
+  color: #fff;
+  border: none;
+}
+.btn-orange:hover {
+  background-color: var(--br-orange-dark);
+  color: #fff;
+}
+
+/* Smooth transitions everywhere */
+* { transition: box-shadow 0.2s ease, transform 0.15s ease; }

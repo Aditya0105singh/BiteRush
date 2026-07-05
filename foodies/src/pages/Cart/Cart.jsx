@@ -23,18 +23,21 @@ const Cart = () => {
       <div className="row">
         <div className="col-lg-8">
           {cartItems.length === 0 ? (
-            <p>Your cart is empty.</p>
+            <div className="empty-cart">
+              <i className="bi bi-cart-x"></i>
+              <h5>Your cart is empty</h5>
+              <p className="text-muted">Add some delicious food to get started!</p>
+            </div>
           ) : (
-            <div className="card mb-4">
+            <div className="cart-items-card card mb-4">
               <div className="card-body">
                 {cartItems.map((food) => (
-                  <div key={food.id} className="row cart-item mb-3">
+                  <div key={food.id} className="row cart-item mb-3 align-items-center">
                     <div className="col-md-3">
                       <img
                         src={food.imageUrl}
                         alt={food.name}
-                        className="img-fluid rounded"
-                        width={100}
+                        className="img-fluid"
                       />
                     </div>
                     <div className="col-md-5">
@@ -114,11 +117,11 @@ const Cart = () => {
                 </strong>
               </div>
               <button
-                className="btn btn-primary w-100"
+                className="checkout-btn"
                 disabled={cartItems.length === 0}
                 onClick={() => navigate("/order")}
               >
-                Proceed to Checkout
+                <i className="bi bi-lightning-charge me-2"></i>Proceed to Checkout
               </button>
             </div>
           </div>
