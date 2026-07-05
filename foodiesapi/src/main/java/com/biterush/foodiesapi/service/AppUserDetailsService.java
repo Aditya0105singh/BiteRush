@@ -23,7 +23,6 @@ public class AppUserDetailsService implements UserDetailsService {
         UserEntity user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         String role = (user.getRole() != null && !user.getRole().isBlank()) ? user.getRole() : "CUSTOMER";
-        System.out.println("[AUTH] Loading user: " + email + " | role from DB: " + user.getRole() + " | resolved: " + role);
         return new User(user.getEmail(), user.getPassword(),
                 List.of(new SimpleGrantedAuthority("ROLE_" + role)));
     }

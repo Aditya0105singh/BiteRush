@@ -28,12 +28,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
-        System.out.println("[JWT] " + request.getMethod() + " " + request.getRequestURI() + " | Auth header present: " + (authHeader != null));
         if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             try {
                 String email = jwtUtil.extractUsername(token);
-                System.out.println("[JWT] Extracted email: " + email);
                 if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     UserDetails userDetails = userDetailsService.loadUserByUsername(email);
                     if (jwtUtil.validateToken(token, userDetails)) {
@@ -42,13 +40,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         );
                         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                        System.out.println("[JWT] Auth set for: " + email + " authorities: " + userDetails.getAuthorities());
-                    } else {
-                        System.out.println("[JWT] Token validation FAILED for: " + email);
                     }
                 }
             } catch (Exception e) {
-                System.out.println("[JWT] Exception extracting token: " + e.getMessage());
+                // invalid token — proceed unauthenticated
             }
         }
         filterChain.doFilter(request, response);
