@@ -17,7 +17,6 @@ import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -33,6 +32,9 @@ public class FoodServiceImpl implements FoodService{
     @Value("${aws.s3.bucketname}")
     private String bucketName;
 
+    @Value("${aws.region}")
+    private String awsRegion;
+
     @Override
     public String uploadFile(MultipartFile file) {
         String originalFilename = file.getOriginalFilename();
@@ -45,18 +47,17 @@ public class FoodServiceImpl implements FoodService{
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
                     .key(key)
-                    .acl("public-read")
                     .contentType(file.getContentType())
                     .build();
             PutObjectResponse response = s3Client.putObject(putObjectRequest, RequestBody.fromBytes(file.getBytes()));
 
             if (response.sdkHttpResponse().isSuccessful()) {
-                return "https://"+bucketName+".s3.amazonaws.com/"+key;
+                return "https://" + bucketName + ".s3." + awsRegion + ".amazonaws.com/" + key;
             } else {
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "File upload failed");
             }
-        }catch (IOException ex) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occured while uploading the file");
+        } catch (Exception ex) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occurred while uploading the file: " + ex.getMessage());
         }
     }
 
