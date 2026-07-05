@@ -37,6 +37,7 @@ public class UserServiceImpl implements UserService{
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .name(request.getName())
+                .role("CUSTOMER")
                 .build();
     }
 

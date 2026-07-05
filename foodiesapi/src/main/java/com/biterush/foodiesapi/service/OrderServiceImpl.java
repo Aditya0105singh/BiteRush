@@ -6,7 +6,9 @@ import com.razorpay.RazorpayException;
 import com.biterush.foodiesapi.entity.OrderEntity;
 import com.biterush.foodiesapi.io.OrderRequest;
 import com.biterush.foodiesapi.io.OrderResponse;
+import com.biterush.foodiesapi.entity.FoodEntity;
 import com.biterush.foodiesapi.repository.CartRespository;
+import com.biterush.foodiesapi.repository.FoodRepository;
 import com.biterush.foodiesapi.repository.OrderRepository;
 import lombok.AllArgsConstructor;
 import org.json.JSONObject;
@@ -32,6 +34,11 @@ public class OrderServiceImpl implements OrderService{
     private UserService userService;
     @Autowired
     private CartRespository cartRespository;
+    @Autowired
+    private FoodRepository foodRepository;
+
+    private static final double DELIVERY_FEE = 10.0;
+    private static final double TAX_RATE = 0.1;
 
     @Value("${razorpay_key}")
     private String RAZORPAY_KEY;
@@ -40,16 +47,27 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public OrderResponse createOrderWithPayment(OrderRequest request) throws RazorpayException {
+        // Compute total from DB prices — never trust the client-supplied amount
+        double subtotal = request.getOrderedItems().stream()
+                .mapToDouble(item -> {
+                    FoodEntity food = foodRepository.findById(item.getFoodId())
+                            .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                    "Food item not found: " + item.getFoodId()));
+                    return food.getPrice() * item.getQuantity();
+                }).sum();
+        double serverTotal = subtotal + DELIVERY_FEE + (subtotal * TAX_RATE);
+
         // Create Razorpay order FIRST — if this fails, nothing is saved to DB
         RazorpayClient razorpayClient = new RazorpayClient(RAZORPAY_KEY, RAZORPAY_SECRET);
         JSONObject orderRequest = new JSONObject();
-        orderRequest.put("amount", request.getAmount() * 100);
+        orderRequest.put("amount", (long) (serverTotal * 100));
         orderRequest.put("currency", "INR");
         orderRequest.put("payment_capture", 1);
         Order razorpayOrder = razorpayClient.orders.create(orderRequest);
 
         String loggedInUserId = userService.findByUserId();
         OrderEntity newOrder = convertToEntity(request);
+        newOrder.setAmount(serverTotal);
         newOrder.setRazorpayOrderId(razorpayOrder.get("id"));
         newOrder.setUserId(loggedInUserId);
         newOrder = orderRepository.save(newOrder);
@@ -110,6 +128,12 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public void removeOrder(String orderId) {
+        OrderEntity entity = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
+        String loggedInUserId = userService.findByUserId();
+        if (!entity.getUserId().equals(loggedInUserId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
+        }
         orderRepository.deleteById(orderId);
     }
 

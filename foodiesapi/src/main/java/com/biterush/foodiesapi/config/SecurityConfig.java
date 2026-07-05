@@ -41,7 +41,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/register", "/api/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/foods", "/api/foods/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/orders/all").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/foods").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/foods/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/orders/all").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/orders/status/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
