@@ -1,68 +1,235 @@
+/* ── Navbar shell ────────────────────────────────────────────────────── */
+
 .br-navbar {
-    background: #fff !important;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
-    padding: 0.5rem 0;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 0;
 }
 
-.br-navbar .nav-link {
-    font-weight: 500;
-    color: #444 !important;
-    padding: 0.5rem 1rem !important;
-    border-radius: 8px;
-    position: relative;
+.br-navbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  min-height: 64px;
+  gap: 16px;
 }
 
-.br-navbar .nav-link:hover,
-.br-navbar .nav-link.active {
-    color: var(--br-orange) !important;
-    background: var(--br-orange-light);
+/* ── Left cluster ────────────────────────────────────────────────────── */
+
+.br-nav-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
 }
 
-.cart-badge {
-    background: var(--br-orange) !important;
-    font-size: 0.65rem;
-    min-width: 18px;
-    height: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.br-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
 }
 
-.dropdown-menu li {
-    cursor: pointer;
+.br-brand-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--br-orange);
+  letter-spacing: -0.3px;
+}
+
+/* Location widget */
+.br-location {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-left: 1px solid #e9e9eb;
+  padding-left: 20px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.br-location-icon {
+  color: var(--br-orange);
+  font-size: 0.9rem;
+}
+
+.br-location-text {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.br-location-city {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--br-dark);
+  border-bottom: 2px solid var(--br-dark);
+  line-height: 1.2;
+}
+
+.br-location-arrow {
+  font-size: 0.65rem;
+  color: var(--br-dark);
+  font-weight: 700;
+}
+
+/* ── Nav links ───────────────────────────────────────────────────────── */
+
+.br-nav-links {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 4px;
+}
+
+.br-nav-link {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #444;
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: background 0.18s, color 0.18s;
+}
+
+.br-nav-link:hover,
+.br-nav-link.active {
+  color: var(--br-orange);
+  background: var(--br-orange-light);
+}
+
+/* ── Right cluster ───────────────────────────────────────────────────── */
+
+.br-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+/* Cart button */
+.br-cart-btn {
+  position: relative;
+  color: #444;
+  font-size: 1.3rem;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transition: background 0.18s;
+}
+
+.br-cart-btn:hover {
+  background: #f4f4f4;
+  color: var(--br-orange);
+}
+
+.br-cart-count {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: var(--br-orange);
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+/* Auth buttons */
+.br-auth-btns { display: flex; gap: 8px; align-items: center; }
+
+.btn-login {
+  background: transparent;
+  border: 2px solid var(--br-orange);
+  color: var(--br-orange);
+  border-radius: 8px;
+  padding: 6px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+
+.btn-login:hover {
+  background: var(--br-orange);
+  color: #fff;
+}
+
+.btn-signup {
+  background: var(--br-orange);
+  border: 2px solid var(--br-orange);
+  color: #fff;
+  border-radius: 8px;
+  padding: 6px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+
+.btn-signup:hover {
+  background: var(--br-orange-dark);
+  border-color: var(--br-orange-dark);
+}
+
+/* Profile dropdown toggle */
+.br-profile-btn {
+  background: transparent;
+  border: 2px solid #e9e9eb;
+  border-radius: 50%;
+  padding: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.18s;
+}
+
+.br-profile-btn:hover { border-color: var(--br-orange); }
+
+/* Dropdown items */
+.dropdown-item {
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 14px;
 }
 
 .dropdown-item:hover {
-    background-color: var(--br-orange-light);
-    color: var(--br-orange);
+  background: var(--br-orange-light);
+  color: var(--br-orange);
 }
 
-.btn-nav-login {
-    border: 2px solid var(--br-orange);
-    color: var(--br-orange);
-    border-radius: 20px;
-    padding: 0.35rem 1.1rem;
-    font-weight: 600;
-    font-size: 0.85rem;
-}
-.btn-nav-login:hover {
-    background: var(--br-orange);
-    color: #fff;
-}
+/* ── Mobile ──────────────────────────────────────────────────────────── */
 
-.btn-nav-register {
-    background: var(--br-orange);
-    color: #fff;
-    border-radius: 20px;
-    padding: 0.35rem 1.1rem;
-    font-weight: 600;
-    font-size: 0.85rem;
-    border: none;
-}
-.btn-nav-register:hover {
-    background: var(--br-orange-dark);
-    color: #fff;
+@media (max-width: 991px) {
+  .br-location { display: none; }
+
+  .br-nav-links {
+    flex-direction: column;
+    padding: 8px 0;
+  }
+
+  .br-nav-right {
+    padding: 8px 0 12px;
+    border-top: 1px solid #f0f0f0;
+    margin-top: 4px;
+    flex-wrap: wrap;
+  }
 }

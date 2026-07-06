@@ -3,36 +3,59 @@ import { Link } from "react-router-dom";
 import { StoreContext } from "../../context/StoreContext";
 import "./FoodItem.css";
 
+const NON_VEG_CATEGORIES = ["Chicken", "North Indian", "Biryani", "Burgers", "Chinese", "Street Food"];
+
+const getRating = (name, price) => {
+  const hash = (name.charCodeAt(0) * 17 + name.length * 7 + price) % 13;
+  return (3.8 + hash * 0.09).toFixed(1);
+};
+
 const FoodItem = ({ name, description, id, imageUrl, price, category }) => {
   const { increaseQty, decreaseQty, quantities } = useContext(StoreContext);
+  const inCart = quantities[id] > 0;
+  const isVeg = !NON_VEG_CATEGORIES.includes(category);
+  const rating = getRating(name, price);
 
   return (
-    <div className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 d-flex">
-      <div className="food-card card w-100">
-        <Link to={`/food/${id}`} className="text-decoration-none">
-          <div className="food-card-img-wrapper">
-            <img src={imageUrl} className="food-card-img" alt={name} />
+    <div className="col-12 col-sm-6 col-md-4 col-lg-3 mb-5 d-flex">
+      <div className="swiggy-card w-100">
+
+        {/* Image container — overflow: visible so ADD button peeks below */}
+        <div className="swiggy-img-wrap">
+          <Link to={`/food/${id}`} className="d-block h-100">
+            <img src={imageUrl} className="swiggy-img" alt={name} loading="lazy" />
+          </Link>
+
+          {/* Top-left: rating */}
+          <div className="swiggy-rating">
+            <i className="bi bi-star-fill"></i> {rating}
           </div>
-        </Link>
-        <div className="card-body pb-1">
-          {category && <span className="category-badge mb-2 d-inline-block">{category}</span>}
-          <h5 className="card-title">{name}</h5>
-          <p className="card-text">{description}</p>
-          <span className="food-price">&#8377;{price}</span>
-        </div>
-        <div className="food-card-footer d-flex justify-content-between align-items-center">
-          <Link className="btn-view" to={`/food/${id}`}>View</Link>
-          {quantities[id] > 0 ? (
-            <div className="qty-controls">
-              <button className="qty-btn qty-btn-minus" onClick={() => decreaseQty(id)}>−</button>
-              <span className="qty-display">{quantities[id]}</span>
-              <button className="qty-btn qty-btn-plus" onClick={() => increaseQty(id)}>+</button>
+
+          {/* Top-right: veg / non-veg */}
+          <div className={`swiggy-veg-badge ${isVeg ? 'veg' : 'nonveg'}`}>
+            <span className="veg-dot"></span>
+          </div>
+
+          {/* Bottom-right: ADD or qty controller (overlaps card body) */}
+          {inCart ? (
+            <div className="swiggy-qty">
+              <button className="qty-dec" onClick={() => decreaseQty(id)}>−</button>
+              <span>{quantities[id]}</span>
+              <button className="qty-inc" onClick={() => increaseQty(id)}>+</button>
             </div>
           ) : (
-            <button className="btn-add-cart" onClick={() => increaseQty(id)}>
-              <i className="bi bi-plus me-1"></i>Add
-            </button>
+            <button className="swiggy-add-btn" onClick={() => increaseQty(id)}>ADD</button>
           )}
+        </div>
+
+        {/* Card body — padding-top leaves room for the overlapping button */}
+        <div className="swiggy-body">
+          {category && (
+            <span className="swiggy-category">{category}</span>
+          )}
+          <h6 className="swiggy-name">{name}</h6>
+          <p className="swiggy-desc">{description}</p>
+          <span className="swiggy-price">&#8377;{price}</span>
         </div>
       </div>
     </div>

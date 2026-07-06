@@ -5,12 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { StoreContext } from "../../context/StoreContext";
 
 const Menubar = () => {
-  const [active, setActive] = useState("home");
-  const { quantities, token, setToken, setQuantities } =
-    useContext(StoreContext);
-  const uniqueItemsInCart = Object.values(quantities).filter(
-    (qty) => qty > 0
-  ).length;
+  const { quantities, token, setToken, setQuantities } = useContext(StoreContext);
+  const totalItems = Object.values(quantities).reduce((sum, q) => sum + q, 0);
   const navigate = useNavigate();
 
   const logout = () => {
@@ -19,74 +15,83 @@ const Menubar = () => {
     setQuantities({});
     navigate("/");
   };
+
   return (
     <nav className="navbar navbar-expand-lg br-navbar">
-      <div className="container">
-        <Link to="/" className="navbar-brand d-flex align-items-center gap-2">
-          <img src={assets.logo} alt="BiteRush" height={40} width={40} />
-          <span className="fw-bold fs-5" style={{ color: 'var(--br-orange)' }}>BiteRush</span>
-        </Link>
+      <div className="container br-navbar-inner">
+
+        {/* Left: Logo + Location */}
+        <div className="br-nav-left">
+          <Link to="/" className="br-brand">
+            <img src={assets.logo} alt="BiteRush" height={36} width={36} />
+            <span className="br-brand-name">BiteRush</span>
+          </Link>
+          <div className="br-location">
+            <i className="bi bi-geo-alt-fill br-location-icon"></i>
+            <div className="br-location-text">
+              <span className="br-location-city">Mumbai</span>
+              <i className="bi bi-chevron-down br-location-arrow"></i>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile toggler */}
         <button
-          className="navbar-toggler border-0"
+          className="navbar-toggler border-0 d-lg-none"
           type="button"
           data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
+          data-bs-target="#brNavCollapse"
           aria-label="Toggle navigation"
         >
           <span className="navbar-toggler-icon"></span>
         </button>
-        <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0 gap-1">
-            <li className="nav-item">
-              <Link className={`nav-link ${active === 'home' ? 'active' : ''}`} to="/" onClick={() => setActive('home')}>
-                Home
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className={`nav-link ${active === 'explore' ? 'active' : ''}`} to="/explore" onClick={() => setActive('explore')}>
-                Explore
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className={`nav-link ${active === 'contact-us' ? 'active' : ''}`} to="/contact" onClick={() => setActive('contact-us')}>
-                Contact
-              </Link>
-            </li>
+
+        {/* Right: Nav links + Cart + Auth */}
+        <div className="collapse navbar-collapse" id="brNavCollapse">
+          <ul className="br-nav-links">
+            <li><Link className="br-nav-link" to="/">Home</Link></li>
+            <li><Link className="br-nav-link" to="/explore">Explore</Link></li>
+            <li><Link className="br-nav-link" to="/contact">Contact</Link></li>
           </ul>
-          <div className="d-flex align-items-center gap-3">
-            <Link to="/cart" className="text-decoration-none position-relative">
-              <i className="bi bi-bag fs-5" style={{ color: '#444' }}></i>
-              {uniqueItemsInCart > 0 && (
-                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill cart-badge">
-                  {uniqueItemsInCart}
-                </span>
+
+          <div className="br-nav-right">
+            {/* Cart */}
+            <Link to="/cart" className="br-cart-btn">
+              <i className="bi bi-bag"></i>
+              {totalItems > 0 && (
+                <span className="br-cart-count">{totalItems}</span>
               )}
             </Link>
+
+            {/* Auth */}
             {!token ? (
-              <>
-                <button className="btn btn-nav-login" onClick={() => navigate('/login')}>Login</button>
-                <button className="btn btn-nav-register" onClick={() => navigate('/register')}>Register</button>
-              </>
+              <div className="br-auth-btns">
+                <button className="btn-login" onClick={() => navigate('/login')}>Login</button>
+                <button className="btn-signup" onClick={() => navigate('/register')}>Sign up</button>
+              </div>
             ) : (
               <div className="dropdown">
-                <a href="#" className="d-flex align-items-center gap-2 text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
-                  <img src={assets.profile} alt="" width={34} height={34} className="rounded-circle border border-2" style={{ borderColor: 'var(--br-orange) !important' }} />
-                </a>
-                <ul className="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2">
-                  <li><span className="dropdown-item" onClick={() => navigate('/myorders')}>
-                    <i className="bi bi-bag-check me-2"></i>My Orders
-                  </span></li>
-                  <li><hr className="dropdown-divider" /></li>
-                  <li><span className="dropdown-item text-danger" onClick={logout}>
-                    <i className="bi bi-box-arrow-right me-2"></i>Logout
-                  </span></li>
+                <button className="br-profile-btn dropdown-toggle" data-bs-toggle="dropdown">
+                  <img src={assets.profile} alt="" width={32} height={32} className="rounded-circle" />
+                </button>
+                <ul className="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2 p-1">
+                  <li>
+                    <span className="dropdown-item rounded-2" onClick={() => navigate('/myorders')}>
+                      <i className="bi bi-bag-check me-2"></i>My Orders
+                    </span>
+                  </li>
+                  <li><hr className="dropdown-divider my-1" /></li>
+                  <li>
+                    <span className="dropdown-item rounded-2 text-danger" onClick={logout}>
+                      <i className="bi bi-box-arrow-right me-2"></i>Logout
+                    </span>
+                  </li>
                 </ul>
               </div>
             )}
           </div>
         </div>
+
       </div>
     </nav>
   );
