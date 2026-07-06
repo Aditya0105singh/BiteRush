@@ -1,0 +1,68 @@
+.explore-search-wrap {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1.5px solid #e9e9eb;
+  border-radius: 12px;
+  padding: 4px 8px 4px 14px;
+  gap: 8px;
+  width: 280px;
+  max-width: 100%;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+}
+
+.explore-search-icon { color: #aaa; font-size: 0.9rem; }
+
+.explore-search-input {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 0.88rem;
+  color: var(--br-dark);
+  font-family: 'Poppins', sans-serif;
+  padding: 6px 0;
+  background: transparent;
+}
+
+.explore-search-input::placeholder { color: #aaa; }
+
+.explore-search-clear {
+  background: #f4f4f4;
+  border: none;
+  color: #666;
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.7rem;
+}
+
+.explore-search-clear:hover { background: #e8e8e8; }
+
+/* Active filter chips */
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--br-orange-light);
+  color: var(--br-orange);
+  border: 1px solid var(--br-orange);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.filter-chip button {
+  background: none;
+  border: none;
+  color: var(--br-orange);
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+  font-weight: 700;
+}

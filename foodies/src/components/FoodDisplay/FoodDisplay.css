@@ -1,0 +1,35 @@
+/* ── Skeleton loading card ────────────────────────────────────────────── */
+
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.skeleton-card {
+  background: #fff;
+  border-radius: var(--br-radius);
+  overflow: hidden;
+  box-shadow: var(--br-card-shadow);
+}
+
+.skel-img {
+  height: 185px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+.skel-body { padding: 26px 14px 14px; }
+
+.skel-line {
+  border-radius: 6px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+  margin-bottom: 10px;
+}
+
+.skel-cat   { height: 10px; width: 60px; }
+.skel-title { height: 14px; width: 80%; }
+.skel-desc  { height: 10px; width: 100%; }
+.skel-price { height: 12px; width: 40px; }
