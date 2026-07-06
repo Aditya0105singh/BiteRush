@@ -2,7 +2,7 @@
 
 A full-stack food delivery web app built with **Spring Boot**, **React**, **MongoDB**, **AWS S3**, and **Razorpay** — developed as a placement portfolio project.
 
-[![CI](https://github.com/YOUR_USERNAME/BiteRush/actions/workflows/build.yml/badge.svg)](https://github.com/YOUR_USERNAME/BiteRush/actions/workflows/build.yml)
+[![CI](https://github.com/Aditya0105singh/BiteRush/actions/workflows/build.yml/badge.svg)](https://github.com/Aditya0105singh/BiteRush/actions/workflows/build.yml)
 
 **Live:**
 - Customer Storefront → https://bite-rush-omega.vercel.app
