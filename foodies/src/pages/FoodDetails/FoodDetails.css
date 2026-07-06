@@ -1,0 +1,119 @@
+.food-detail-img {
+  width: 100%;
+  height: 380px;
+  object-fit: cover;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+}
+
+.food-detail-cat {
+  background: var(--br-orange-light);
+  color: var(--br-orange);
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.food-detail-price {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: var(--br-dark);
+}
+
+.btn-detail-cart {
+  background: var(--br-orange);
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  padding: 0.65rem 2rem;
+  font-weight: 700;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.btn-detail-cart:hover {
+  background: var(--br-orange-dark);
+  transform: translateY(-1px);
+}
+
+.btn-detail-back {
+  color: var(--br-gray);
+  border: 1.5px solid #e9e9eb;
+  border-radius: 30px;
+  padding: 0.65rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.btn-detail-back:hover {
+  border-color: var(--br-orange);
+  color: var(--br-orange);
+}
+
+/* ── You Might Also Like ─────────────────────────────────────────────── */
+
+.similar-title {
+  font-weight: 700;
+  color: var(--br-dark);
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.similar-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.similar-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.similar-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+.similar-img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+}
+
+.similar-body {
+  padding: 10px 12px;
+}
+
+.similar-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--br-dark);
+  margin: 0 0 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.similar-price {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--br-orange);
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .similar-grid { grid-template-columns: repeat(2, 1fr); }
+  .food-detail-img { height: 250px; }
+}

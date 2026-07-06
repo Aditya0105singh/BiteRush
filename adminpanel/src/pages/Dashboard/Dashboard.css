@@ -1,0 +1,113 @@
+.dashboard-wrap {
+  padding: 2rem 1.5rem;
+}
+
+.dash-title {
+  font-weight: 700;
+  color: #282c3f;
+  margin-bottom: 2px;
+}
+
+.dash-sub {
+  color: #686b78;
+  font-size: 0.88rem;
+  margin-bottom: 1.75rem;
+}
+
+/* ── Stat cards grid ─────────────────────────────────────────────────── */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.stat-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.stat-card:hover {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.11);
+  transform: translateY(-2px);
+}
+
+.stat-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: #686b78;
+  font-weight: 600;
+  margin: 0 0 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #282c3f;
+  margin: 0 0 2px;
+}
+
+.stat-sub {
+  font-size: 0.72rem;
+  color: #aaa;
+  margin: 0;
+}
+
+/* ── Recent orders card ──────────────────────────────────────────────── */
+
+.recent-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  padding: 1.25rem 1.5rem;
+}
+
+.recent-title {
+  font-weight: 700;
+  color: #282c3f;
+  margin-bottom: 1rem;
+}
+
+.table th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #686b78;
+  font-weight: 600;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* ── Status badges ────────────────────────────────────────────────────── */
+
+.dash-badge {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.dash-badge.paid           { background: #f0fdf4; color: #15803d; }
+.dash-badge.unpaid         { background: #fef2f2; color: #dc2626; }
+.dash-badge.status-delivered     { background: #f0fdf4; color: #15803d; }
+.dash-badge.status-food-preparing { background: #fff7ed; color: #c2410c; }
+.dash-badge.status-out-for-delivery { background: #eff6ff; color: #1d4ed8; }
+.dash-badge.status-pending { background: #fef9c3; color: #854d0e; }
+.dash-badge.status-cancelled { background: #fef2f2; color: #dc2626; }

@@ -21,7 +21,7 @@ export const addFood = async (foodData, image, token) => {
 
 export const getFoodList = async () => {
     try {
-        const response = await axios.get(API_URL);
+        const response = await axios.get(API_URL + '/all');
         return response.data;
     } catch (error) {
         console.log('Error fetching food list', error);
