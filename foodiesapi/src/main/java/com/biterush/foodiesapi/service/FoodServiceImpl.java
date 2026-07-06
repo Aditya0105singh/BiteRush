@@ -7,6 +7,10 @@ import com.biterush.foodiesapi.repository.FoodRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +26,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-public class FoodServiceImpl implements FoodService{
+public class FoodServiceImpl implements FoodService {
 
     @Autowired
     private S3Client s3Client;
@@ -42,7 +46,7 @@ public class FoodServiceImpl implements FoodService{
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid file: missing filename or extension");
         }
         String filenameExtension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
-        String key = UUID.randomUUID().toString()+"."+filenameExtension;
+        String key = UUID.randomUUID().toString() + "." + filenameExtension;
         try {
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
@@ -71,14 +75,24 @@ public class FoodServiceImpl implements FoodService{
     }
 
     @Override
-    public List<FoodResponse> readFoods() {
-        List<FoodEntity> databaseEntries = foodRepository.findAll();
-        return databaseEntries.stream().map(object -> convertToResponse(object)).collect(Collectors.toList());
+    public Page<FoodResponse> readFoods(int page, int size, String category) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
+        Page<FoodEntity> foodPage = (category != null && !category.isBlank())
+                ? foodRepository.findByCategoryIgnoreCase(category, pageable)
+                : foodRepository.findAll(pageable);
+        return foodPage.map(this::convertToResponse);
+    }
+
+    @Override
+    public List<FoodResponse> readAllFoods() {
+        return foodRepository.findAll(Sort.by("name").ascending())
+                .stream().map(this::convertToResponse).collect(Collectors.toList());
     }
 
     @Override
     public FoodResponse readFood(String id) {
-        FoodEntity existingFood = foodRepository.findById(id).orElseThrow(() -> new RuntimeException("Food not found for the id:"+id));
+        FoodEntity existingFood = foodRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Food not found for id: " + id));
         return convertToResponse(existingFood);
     }
 
@@ -96,7 +110,7 @@ public class FoodServiceImpl implements FoodService{
     public void deleteFood(String id) {
         FoodResponse response = readFood(id);
         String imageUrl = response.getImageUrl();
-        String filename = imageUrl.substring(imageUrl.lastIndexOf("/")+1);
+        String filename = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
         boolean isFileDelete = deleteFile(filename);
         if (isFileDelete) {
             foodRepository.deleteById(response.getId());
@@ -110,7 +124,6 @@ public class FoodServiceImpl implements FoodService{
                 .category(request.getCategory())
                 .price(request.getPrice())
                 .build();
-
     }
 
     private FoodResponse convertToResponse(FoodEntity entity) {
