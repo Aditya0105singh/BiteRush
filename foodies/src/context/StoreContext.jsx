@@ -4,6 +4,7 @@ import {
   addToCart,
   getCartData,
   removeQtyFromCart,
+  clearCartItems,
 } from "../service/cartService";
 
 export const StoreContext = createContext(null);
@@ -27,12 +28,17 @@ export const StoreContextProvider = (props) => {
     await removeQtyFromCart(foodId, token);
   };
 
-  const removeFromCart = (foodId) => {
-    setQuantities((prevQuantities) => {
-      const updatedQuantitites = { ...prevQuantities };
-      delete updatedQuantitites[foodId];
-      return updatedQuantitites;
+  const removeFromCart = async (foodId) => {
+    // Remove all qty one by one via the backend so cart stays in sync on refresh
+    const qty = quantities[foodId] || 0;
+    setQuantities((prev) => {
+      const updated = { ...prev };
+      delete updated[foodId];
+      return updated;
     });
+    for (let i = 0; i < qty; i++) {
+      await removeQtyFromCart(foodId, token);
+    }
   };
 
   const loadCartData = async (token) => {

@@ -16,8 +16,15 @@ const Login = () => {
     setLoading(true);
     try {
       await login(data.email, data.password);
-    } catch {
-      toast.error('Invalid credentials. Please try again.');
+    } catch (err) {
+      const status = err?.response?.status;
+      if (!status) {
+        toast.error('Server is waking up — please wait 20–30 seconds and try again.');
+      } else if (status === 401) {
+        toast.error('Invalid credentials. Please try again.');
+      } else {
+        toast.error('Login failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }

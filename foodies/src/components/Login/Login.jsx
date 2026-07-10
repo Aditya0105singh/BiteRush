@@ -32,8 +32,14 @@ const Login = () => {
         toast.error("Unable to login. Please try again.");
       }
     } catch (error) {
-      console.log("Unable to login", error);
-      toast.error("Unable to login. Please try again");
+      const status = error?.response?.status;
+      if (!status) {
+        toast.error('Server is waking up — please wait 20–30 seconds and try again.');
+      } else if (status === 401) {
+        toast.error('Invalid email or password.');
+      } else {
+        toast.error('Unable to login. Please try again.');
+      }
     }
   };
   return (

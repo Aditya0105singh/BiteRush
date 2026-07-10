@@ -70,9 +70,9 @@ const PlaceOrder = () => {
   const initiateRazorpayPayment = (order) => {
     const options = {
       key: RAZORPAY_KEY,
-      amount: order.amount, //Convert to paise
+      amount: order.amount,
       currency: "INR",
-      name: "Food Land",
+      name: "BiteRush",
       description: "Food order payment",
       order_id: order.razorpayOrderId,
       handler: verifyPaymentHandler,
@@ -81,9 +81,9 @@ const PlaceOrder = () => {
         email: data.email,
         contact: data.phoneNumber,
       },
-      theme: { color: "#3399cc" },
+      theme: { color: "#fc8019" },
       modal: {
-        ondismiss: deleteOrderHandler,
+        ondismiss: () => deleteOrderHandler(order.id),
       },
     };
     const razorpay = new window.Razorpay(options);

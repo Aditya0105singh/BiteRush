@@ -1,12 +1,10 @@
-import axios from "axios";
+import axiosInstance from './axiosInstance';
 
-const API_URL = `${import.meta.env.VITE_API_URL}/api/orders`;
+const API_URL = `/api/orders`;
 
 export const fetchUserOrders = async (token) => {
     try {
-        const response = await axios.get(API_URL, {
-            headers: { Authorization: `Bearer ${token}` },
-        }); 
+        const response = await axiosInstance.get(API_URL);
         return response.data;
     } catch (error) {
         console.error('Error occured while fetching the orders', error);
@@ -16,11 +14,7 @@ export const fetchUserOrders = async (token) => {
 
 export const createOrder = async (orderData, token) => {
     try {
-        const response = await axios.post(
-            API_URL+"/create",
-            orderData,
-            { headers: { Authorization: `Bearer ${token}` } }
-        );
+        const response = await axiosInstance.post(API_URL + '/create', orderData);
         return response.data;
     } catch (error) {
         console.error('Error occured while creating the order', error);
@@ -30,11 +24,7 @@ export const createOrder = async (orderData, token) => {
 
 export const verifyPayment = async (paymentData, token) => {
     try {
-        const response = await axios.post(
-            API_URL+"/verify",
-            paymentData,
-            { headers: { Authorization: `Bearer ${token}` } }
-        );
+        const response = await axiosInstance.post(API_URL + '/verify', paymentData);
         return response.status === 200;
     } catch (error) {
         console.error('Error occured while verifing the payment', error);
@@ -44,9 +34,7 @@ export const verifyPayment = async (paymentData, token) => {
 
 export const deleteOrder = async (orderId, token) => {
     try {
-        await axios.delete(API_URL+"/"+ orderId, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
+        await axiosInstance.delete(API_URL + '/' + orderId);
     } catch (error) {
         console.error('Error occured while deleting the order', error);
         throw error;
