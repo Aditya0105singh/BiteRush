@@ -56,12 +56,12 @@ const MyOrders = () => {
           <p className="text-muted">When you place an order it will appear here.</p>
         </div>
       ) : (
-        data.map((order, index) => {
+        data.map((order) => {
           const step = statusToStep(order.orderStatus);
           const cancelled = step === -1;
 
           return (
-            <div key={index} className="order-card">
+            <div key={order.id} className="order-card">
               {/* Header row */}
               <div className="order-card-header">
                 <div>

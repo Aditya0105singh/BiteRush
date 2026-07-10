@@ -42,7 +42,7 @@ const PlaceOrder = () => {
       phoneNumber: data.phoneNumber,
       email: data.email,
       orderedItems: cartItems.map((item) => ({
-        foodId: item.foodId,
+        foodId: item.id,
         quantity: quantities[item.id],
         price: item.price * quantities[item.id],
         category: item.category,
@@ -50,7 +50,7 @@ const PlaceOrder = () => {
         description: item.description,
         name: item.name,
       })),
-      amount: total.toFixed(2),
+      amount: parseFloat(total.toFixed(2)),
       orderStatus: "Placed",
     };
 
@@ -292,7 +292,16 @@ const PlaceOrder = () => {
                     onChange={onChangeHandler}
                   >
                     <option value="">Choose...</option>
+                    <option>Maharashtra</option>
                     <option>Karnataka</option>
+                    <option>Delhi</option>
+                    <option>Tamil Nadu</option>
+                    <option>Telangana</option>
+                    <option>Gujarat</option>
+                    <option>Rajasthan</option>
+                    <option>Uttar Pradesh</option>
+                    <option>West Bengal</option>
+                    <option>Madhya Pradesh</option>
                   </select>
                 </div>
 
@@ -300,17 +309,16 @@ const PlaceOrder = () => {
                   <label htmlFor="city" className="form-label">
                     City
                   </label>
-                  <select
-                    className="form-select"
+                  <input
+                    type="text"
+                    className="form-control"
                     id="city"
+                    placeholder="Enter your city"
                     required
                     name="city"
                     value={data.city}
                     onChange={onChangeHandler}
-                  >
-                    <option value="">Choose...</option>
-                    <option>Banglore</option>
-                  </select>
+                  />
                 </div>
 
                 <div className="col-md-3">
