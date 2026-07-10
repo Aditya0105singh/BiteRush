@@ -9,7 +9,7 @@ BiteRush/
 ├── online-food-delivery-project/online-food-delivery-project/
 │   ├── adminpanel/     # React 19 + Vite — Admin Dashboard (port 5173)
 │   ├── foodies/        # React 18 + Vite — Customer Storefront (port 5174)
-│   └── foodiesapi/     # Spring Boot 3.4.3 + Java 21 — REST API (port 8080)
+│   └── foodiesapi/     # Spring Boot 3.4.3 + Java 21 — REST API (port 9090)
 └── Foodies API.postman_collection.json   # Postman collection for API testing
 ```
 
@@ -51,12 +51,13 @@ $env:RAZORPAY_SECRET="..."
 java -jar target/foodiesapi-0.0.1-SNAPSHOT.jar
 ```
 
-API runs at `http://localhost:8080`.
+API runs at `http://localhost:9090`.
 
 ### 2. Admin Panel
 
 ```bash
 cd adminpanel
+# .env.local is already created — no setup needed
 npm run dev        # http://localhost:5173
 ```
 
