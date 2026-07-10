@@ -23,8 +23,12 @@ const Register = () => {
         toast.success("Account created with Google!");
         navigate("/");
       }
-    } catch {
-      toast.error("Google sign-up failed. Please try again.");
+    } catch (err) {
+      if (err?.code === "ECONNABORTED" || !err?.response?.status) {
+        toast.error("Server is starting up — wait 30 seconds and try again.");
+      } else {
+        toast.error("Google sign-up failed. Please try again.");
+      }
     } finally {
       setLoading(false);
     }

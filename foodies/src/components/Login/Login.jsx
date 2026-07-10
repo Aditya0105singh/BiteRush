@@ -29,8 +29,12 @@ const Login = () => {
         toast.success("Logged in with Google!");
         navigate("/");
       }
-    } catch {
-      toast.error("Google login failed. Please try again.");
+    } catch (err) {
+      if (err?.code === "ECONNABORTED" || !err?.response?.status) {
+        toast.error("Server is starting up — wait 30 seconds and try again.");
+      } else {
+        toast.error("Google login failed. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
