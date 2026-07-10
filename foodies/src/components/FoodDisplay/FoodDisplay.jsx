@@ -39,8 +39,8 @@ const FoodDisplay = ({ category, searchText }) => {
     <div className="container">
       <div className="row">
         {filteredFoods.length > 0 ? (
-          filteredFoods.map((food, index) => (
-            <FoodItem key={index}
+          filteredFoods.map((food) => (
+            <FoodItem key={food.id}
               name={food.name}
               description={food.description}
               id={food.id}

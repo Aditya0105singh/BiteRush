@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(() => localStorage.getItem('admin_token'));
 
     const login = async (email, password) => {
-        const response = await axios.post(`${API_URL}/login`, { email, password });
+        const response = await axios.post(`${API_URL}/login`, { email, password }, { timeout: 35000 });
         const jwt = response.data.token;
         localStorage.setItem('admin_token', jwt);
         setToken(jwt);

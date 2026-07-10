@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { StoreContext } from "../../context/StoreContext";
+import { toast } from "react-toastify";
 import "./FoodItem.css";
 
 const NON_VEG_CATEGORIES = ["Chicken", "North Indian", "Biryani", "Burgers", "Chinese", "Street Food"];
@@ -11,8 +12,28 @@ const getRating = (name, price) => {
 };
 
 const FoodItem = ({ name, description, id, imageUrl, price, category }) => {
-  const { increaseQty, decreaseQty, quantities } = useContext(StoreContext);
+  const { increaseQty, decreaseQty, quantities, token } = useContext(StoreContext);
+  const navigate = useNavigate();
   const inCart = quantities[id] > 0;
+
+  const handleAdd = () => {
+    if (!token) {
+      toast.info('Please login to add items to cart.');
+      navigate('/login');
+      return;
+    }
+    increaseQty(id);
+  };
+
+  const handleIncrease = () => {
+    if (!token) { navigate('/login'); return; }
+    increaseQty(id);
+  };
+
+  const handleDecrease = () => {
+    if (!token) { navigate('/login'); return; }
+    decreaseQty(id);
+  };
   const isVeg = !NON_VEG_CATEGORIES.includes(category);
   const rating = getRating(name, price);
 
@@ -39,12 +60,12 @@ const FoodItem = ({ name, description, id, imageUrl, price, category }) => {
           {/* Bottom-right: ADD or qty controller (overlaps card body) */}
           {inCart ? (
             <div className="swiggy-qty">
-              <button className="qty-dec" onClick={() => decreaseQty(id)}>−</button>
+              <button className="qty-dec" onClick={handleDecrease}>−</button>
               <span>{quantities[id]}</span>
-              <button className="qty-inc" onClick={() => increaseQty(id)}>+</button>
+              <button className="qty-inc" onClick={handleIncrease}>+</button>
             </div>
           ) : (
-            <button className="swiggy-add-btn" onClick={() => increaseQty(id)}>ADD</button>
+            <button className="swiggy-add-btn" onClick={handleAdd}>ADD</button>
           )}
         </div>
 

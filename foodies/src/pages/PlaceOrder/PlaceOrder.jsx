@@ -51,7 +51,7 @@ const PlaceOrder = () => {
         name: item.name,
       })),
       amount: total.toFixed(2),
-      orderStatus: "Preparing",
+      orderStatus: "Placed",
     };
 
     try {

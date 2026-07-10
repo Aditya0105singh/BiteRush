@@ -29,7 +29,14 @@ const Register = () => {
         toast.error("Unable to register. Please try again");
       }
     } catch (error) {
-      toast.error("Unable to register. Please try again");
+      const status = error?.response?.status;
+      if (status === 409) {
+        toast.error("An account with this email already exists. Please login.");
+      } else if (!status) {
+        toast.error("Server is waking up — please wait 20–30 seconds and try again.");
+      } else {
+        toast.error("Unable to register. Please try again.");
+      }
     }
   };
 
