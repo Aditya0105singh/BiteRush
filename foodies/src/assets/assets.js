@@ -45,7 +45,7 @@ export const categories = [
     },
     {
         category: 'Desserts',
-        icon: 'https://images.unsplash.com/photo-1666791256516-6f7aa38e1be2?w=200&q=80'
+        icon: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=200&q=80'
     },
     {
         category: 'Drinks',
