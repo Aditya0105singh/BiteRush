@@ -2,16 +2,23 @@ package com.biterush.foodiesapi.controller;
 
 import com.biterush.foodiesapi.io.AuthenticationRequest;
 import com.biterush.foodiesapi.io.AuthenticationResponse;
+import com.biterush.foodiesapi.io.GoogleAuthRequest;
 import com.biterush.foodiesapi.service.AppUserDetailsService;
+import com.biterush.foodiesapi.service.UserService;
 import com.biterush.foodiesapi.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -22,6 +29,8 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final AppUserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
+    private final RestTemplate restTemplate;
+    private final UserService userService;
 
     @PostMapping("/login")
     @Operation(summary = "Login", description = "Authenticates with email + password and returns a JWT token.")
@@ -31,5 +40,29 @@ public class AuthController {
         final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
         final String jwtToken = jwtUtil.generateToken(userDetails);
         return new AuthenticationResponse(request.getEmail(), jwtToken);
+    }
+
+    @PostMapping("/auth/google")
+    @Operation(summary = "Google Login", description = "Verify a Google ID token, create account if new, and return a JWT.")
+    @SuppressWarnings("unchecked")
+    public AuthenticationResponse googleLogin(@RequestBody GoogleAuthRequest request) {
+        String url = "https://oauth2.googleapis.com/tokeninfo?id_token=" + request.getToken();
+        Map<String, String> googleData;
+        try {
+            googleData = restTemplate.getForObject(url, Map.class);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid Google token");
+        }
+        if (googleData == null || googleData.get("email") == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid Google token");
+        }
+        String email = googleData.get("email");
+        String name = googleData.getOrDefault("name", email.split("@")[0]);
+
+        userService.findOrCreateGoogleUser(email, name);
+
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        final String jwtToken = jwtUtil.generateToken(userDetails);
+        return new AuthenticationResponse(email, jwtToken);
     }
 }

@@ -1,9 +1,10 @@
 import React, { useContext, useState } from "react";
 import "./Login.css";
 import { Link, useNavigate } from "react-router-dom";
-import { login } from "../../service/authService";
+import { login, googleAuth } from "../../service/authService";
 import { StoreContext } from "../../context/StoreContext";
 import { toast } from "react-toastify";
+import { GoogleLogin } from "@react-oauth/google";
 
 const Login = () => {
   const { setToken, loadCartData } = useContext(StoreContext);
@@ -15,6 +16,24 @@ const Login = () => {
     const name = event.target.name;
     const value = event.target.value;
     setData((data) => ({ ...data, [name]: value }));
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setLoading(true);
+    try {
+      const response = await googleAuth(credentialResponse.credential);
+      if (response.status === 200) {
+        setToken(response.data.token);
+        localStorage.setItem("token", response.data.token);
+        await loadCartData(response.data.token);
+        toast.success("Logged in with Google!");
+        navigate("/");
+      }
+    } catch {
+      toast.error("Google login failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const onSubmitHandler = async (event) => {
@@ -104,6 +123,20 @@ const Login = () => {
                     Server is starting up — this may take 20–30 seconds on first use.
                   </p>
                 )}
+                <div className="d-flex align-items-center gap-2 my-3">
+                  <hr className="flex-grow-1 m-0" />
+                  <span className="text-muted" style={{ fontSize: "0.8rem", whiteSpace: "nowrap" }}>or continue with</span>
+                  <hr className="flex-grow-1 m-0" />
+                </div>
+                <div className="d-flex justify-content-center">
+                  <GoogleLogin
+                    onSuccess={handleGoogleSuccess}
+                    onError={() => toast.error("Google login failed. Please try again.")}
+                    theme="outline"
+                    shape="rectangular"
+                    width="100%"
+                  />
+                </div>
                 <div className="mt-4">
                   Don't have an account? <Link to="/register">Sign up</Link>
                 </div>

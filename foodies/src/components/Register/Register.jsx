@@ -1,13 +1,34 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import "./Register.css";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { registerUser } from "../../service/authService";
+import { registerUser, googleAuth } from "../../service/authService";
+import { StoreContext } from "../../context/StoreContext";
+import { GoogleLogin } from "@react-oauth/google";
 
 const Register = () => {
   const navigate = useNavigate();
+  const { setToken, loadCartData } = useContext(StoreContext);
   const [data, setData] = useState({ name: "", email: "", password: "" });
   const [loading, setLoading] = useState(false);
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setLoading(true);
+    try {
+      const response = await googleAuth(credentialResponse.credential);
+      if (response.status === 200) {
+        setToken(response.data.token);
+        localStorage.setItem("token", response.data.token);
+        await loadCartData(response.data.token);
+        toast.success("Account created with Google!");
+        navigate("/");
+      }
+    } catch {
+      toast.error("Google sign-up failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const onChangeHandler = (event) => {
     const name = event.target.name;
@@ -116,6 +137,20 @@ const Register = () => {
                     Server is starting up — this may take 20–30 seconds on first use.
                   </p>
                 )}
+                <div className="d-flex align-items-center gap-2 my-3">
+                  <hr className="flex-grow-1 m-0" />
+                  <span className="text-muted" style={{ fontSize: "0.8rem", whiteSpace: "nowrap" }}>or continue with</span>
+                  <hr className="flex-grow-1 m-0" />
+                </div>
+                <div className="d-flex justify-content-center">
+                  <GoogleLogin
+                    onSuccess={handleGoogleSuccess}
+                    onError={() => toast.error("Google sign-up failed. Please try again.")}
+                    theme="outline"
+                    shape="rectangular"
+                    width="100%"
+                  />
+                </div>
                 <div className="mt-4">
                   Already have an account? <Link to="/login">Sign In</Link>
                 </div>

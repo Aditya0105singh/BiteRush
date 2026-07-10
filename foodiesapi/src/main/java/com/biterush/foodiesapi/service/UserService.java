@@ -8,4 +8,6 @@ public interface UserService {
     UserResponse registerUser(UserRequest request);
 
     String findByUserId();
+
+    void findOrCreateGoogleUser(String email, String name);
 }

@@ -7,11 +7,14 @@ import 'bootstrap/dist/js/bootstrap.bundle.js';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { BrowserRouter } from 'react-router-dom';
 import { StoreContextProvider } from './context/StoreContext.jsx';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <BrowserRouter>
-    <StoreContextProvider>
-      <App />
-    </StoreContextProvider>
-  </BrowserRouter>
+  <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+    <BrowserRouter>
+      <StoreContextProvider>
+        <App />
+      </StoreContextProvider>
+    </BrowserRouter>
+  </GoogleOAuthProvider>
 )

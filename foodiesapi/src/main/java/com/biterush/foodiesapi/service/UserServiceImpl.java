@@ -32,6 +32,19 @@ public class UserServiceImpl implements UserService{
         return loggedInUser.getId();
     }
 
+    @Override
+    public void findOrCreateGoogleUser(String email, String name) {
+        userRepository.findByEmail(email).orElseGet(() -> {
+            UserEntity newUser = UserEntity.builder()
+                    .email(email)
+                    .name(name)
+                    .password("")
+                    .role("CUSTOMER")
+                    .build();
+            return userRepository.save(newUser);
+        });
+    }
+
     private UserEntity convertToEntity(UserRequest request) {
         return UserEntity.builder()
                 .email(request.getEmail())
