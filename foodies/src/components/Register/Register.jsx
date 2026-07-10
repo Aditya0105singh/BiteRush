@@ -6,11 +6,8 @@ import { registerUser } from "../../service/authService";
 
 const Register = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
+  const [data, setData] = useState({ name: "", email: "", password: "" });
+  const [loading, setLoading] = useState(false);
 
   const onChangeHandler = (event) => {
     const name = event.target.name;
@@ -20,6 +17,7 @@ const Register = () => {
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
+    setLoading(true);
     try {
       const response = await registerUser(data);
       if (response.status === 201) {
@@ -32,11 +30,13 @@ const Register = () => {
       const status = error?.response?.status;
       if (status === 409) {
         toast.error("An account with this email already exists. Please login.");
-      } else if (!status) {
-        toast.error("Server is waking up — please wait 20–30 seconds and try again.");
+      } else if (error?.code === "ECONNABORTED" || !status) {
+        toast.error("Server is waking up — please wait 30 seconds and try again.");
       } else {
         toast.error("Unable to register. Please try again.");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -94,16 +94,28 @@ const Register = () => {
                   <button
                     className="btn btn-outline-primary btn-login text-uppercase"
                     type="submit"
+                    disabled={loading}
                   >
-                    Sign up
+                    {loading ? (
+                      <>
+                        <span className="spinner-border spinner-border-sm me-2" role="status" />
+                        Creating account...
+                      </>
+                    ) : "Sign up"}
                   </button>
                   <button
                     className="btn btn-outline-danger btn-login text-uppercase mt-2"
                     type="reset"
+                    disabled={loading}
                   >
                     Reset
                   </button>
                 </div>
+                {loading && (
+                  <p className="text-center text-muted mt-2" style={{ fontSize: "0.82rem" }}>
+                    Server is starting up — this may take 20–30 seconds on first use.
+                  </p>
+                )}
                 <div className="mt-4">
                   Already have an account? <Link to="/login">Sign In</Link>
                 </div>
