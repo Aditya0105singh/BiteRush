@@ -1,40 +1,50 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { assets } from '../../assets/assets';
 import { useAuth } from '../../context/AuthContext';
 
-const Sidebar = ({ sidebarVisible }) => {
-  const { logout } = useAuth();
-  const { pathname } = useLocation();
+const NavItem = ({ to, icon, label }) => (
+  <NavLink
+    to={to}
+    className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`}
+  >
+    <i className={`bi bi-${icon}`}></i>
+    <span>{label}</span>
+  </NavLink>
+);
 
-  const link = (to, icon, label) => (
-    <Link
-      className={`list-group-item list-group-item-action list-group-item-light p-3 ${pathname === to ? 'active' : ''}`}
-      to={to}
-    >
-      <i className={`bi bi-${icon} me-2`}></i>{label}
-    </Link>
-  );
+const Sidebar = ({ open }) => {
+  const { logout } = useAuth();
 
   return (
-    <div className={`border-end bg-white ${sidebarVisible ? '' : 'd-none'}`} id="sidebar-wrapper">
-      <div className="sidebar-heading border-bottom bg-light d-flex align-items-center gap-2 px-3">
-        <img src={assets.logo} alt="" height={32} width={32} />
-        <span style={{ fontWeight: 700, color: '#fc8019', fontSize: '1rem' }}>BiteRush</span>
+    <aside className={`admin-sidebar${open ? '' : ' collapsed'}`}>
+      <div className="sidebar-brand">
+        <img src={assets.logo} alt="BiteRush" />
+        <span>BiteRush</span>
       </div>
-      <div className="list-group list-group-flush">
-        {link('/dashboard', 'speedometer2', 'Dashboard')}
-        {link('/add',       'plus-circle',  'Add Food')}
-        {link('/list',      'list-ul',      'Food List')}
-        {link('/orders',    'bag-check',    'Orders')}
-        <button
-          className="list-group-item list-group-item-action list-group-item-light p-3 text-danger border-0 text-start bg-white"
-          onClick={logout}
-        >
-          <i className="bi bi-box-arrow-left me-2"></i>Logout
+
+      <nav className="sidebar-nav">
+        <div className="sidebar-section-label">Main</div>
+        <NavItem to="/dashboard" icon="speedometer2" label="Dashboard" />
+        <NavItem to="/list"      icon="grid"         label="Menu" />
+        <NavItem to="/orders"    icon="bag-check"    label="Orders" />
+        <NavItem to="/add"       icon="plus-circle"  label="Add Food" />
+      </nav>
+
+      <div className="sidebar-bottom">
+        <button className="sidebar-link" onClick={logout}>
+          <i className="bi bi-box-arrow-left"></i>
+          <span>Logout</span>
         </button>
+        <div className="sidebar-user">
+          <div className="sidebar-avatar">A</div>
+          <div className="sidebar-user-info">
+            <div className="sidebar-user-name">Admin</div>
+            <div className="sidebar-user-role">Administrator</div>
+          </div>
+        </div>
       </div>
-    </div>
+    </aside>
   );
 };
 

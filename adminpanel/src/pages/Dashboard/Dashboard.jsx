@@ -4,18 +4,33 @@ import { getFoodList } from '../../services/foodService';
 import { useAuth } from '../../context/AuthContext';
 import './Dashboard.css';
 
-const StatCard = ({ icon, label, value, color, sub }) => (
-  <div className="stat-card">
-    <div className="stat-icon" style={{ background: color + '18', color }}>
-      <i className={`bi bi-${icon}`}></i>
+const StatCard = ({ icon, label, value, color, sub, trend }) => (
+  <div className="dash-stat-card">
+    <div className="dash-stat-top">
+      <div className="dash-stat-icon" style={{ background: color + '18', color }}>
+        <i className={`bi bi-${icon}`}></i>
+      </div>
+      {trend !== undefined && (
+        <span className={`dash-trend ${trend >= 0 ? 'up' : 'down'}`}>
+          <i className={`bi bi-arrow-${trend >= 0 ? 'up' : 'down'}-right`}></i>
+          {Math.abs(trend)}%
+        </span>
+      )}
     </div>
-    <div className="stat-body">
-      <p className="stat-label">{label}</p>
-      <h3 className="stat-value">{value}</h3>
-      {sub && <p className="stat-sub">{sub}</p>}
-    </div>
+    <div className="dash-stat-value">{value}</div>
+    <div className="dash-stat-label">{label}</div>
+    {sub && <div className="dash-stat-sub">{sub}</div>}
   </div>
 );
+
+const statusClass = s => {
+  if (!s) return 'pending';
+  const l = s.toLowerCase();
+  if (l.includes('deliver')) return 'delivered';
+  if (l.includes('out')) return 'out';
+  if (l.includes('prepar') || l.includes('confirm')) return 'preparing';
+  return 'pending';
+};
 
 const Dashboard = () => {
   const { token } = useAuth();
@@ -24,118 +39,128 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const load = async () => {
+    (async () => {
       try {
         const [orderData, foodData] = await Promise.all([
           fetchAllOrders(token),
-          getFoodList()
+          getFoodList(),
         ]);
         setOrders(orderData);
         setFoodCount(foodData.length);
       } finally {
         setLoading(false);
       }
-    };
-    load();
+    })();
   }, []);
 
   const totalRevenue = orders
     .filter(o => o.paymentStatus === 'Paid')
-    .reduce((sum, o) => sum + (o.amount || 0), 0);
+    .reduce((s, o) => s + (o.amount || 0), 0);
 
-  const pending = orders.filter(o =>
-    o.orderStatus !== 'Delivered' && o.orderStatus !== 'Cancelled'
+  const pending = orders.filter(
+    o => o.orderStatus !== 'Delivered' && o.orderStatus !== 'Cancelled'
   ).length;
 
   const delivered = orders.filter(o => o.orderStatus === 'Delivered').length;
-
-  // recent 5 orders
-  const recent = [...orders].reverse().slice(0, 5);
+  const recent = [...orders].reverse().slice(0, 6);
 
   if (loading) return (
-    <div className="text-center py-5">
-      <div className="spinner-border text-warning" role="status" />
+    <div className="dash-loading">
+      <div className="dash-spinner"></div>
+      <p>Loading dashboard…</p>
     </div>
   );
 
   return (
-    <div className="dashboard-wrap">
-      <h4 className="dash-title">Dashboard</h4>
-      <p className="dash-sub">Welcome back, Admin 👋</p>
-
-      {/* Stat cards */}
-      <div className="stats-grid">
-        <StatCard
-          icon="currency-rupee"
-          label="Total Revenue"
-          value={`₹${totalRevenue.toFixed(0)}`}
-          color="#fc8019"
-          sub="From paid orders"
-        />
-        <StatCard
-          icon="bag-check"
-          label="Total Orders"
-          value={orders.length}
-          color="#5b6ef5"
-          sub={`${delivered} delivered`}
-        />
-        <StatCard
-          icon="clock-history"
-          label="Pending Orders"
-          value={pending}
-          color="#f59e0b"
-          sub="Needs attention"
-        />
-        <StatCard
-          icon="egg-fried"
-          label="Food Items"
-          value={foodCount}
-          color="#60b246"
-          sub="On the menu"
-        />
+    <div>
+      <div className="page-header">
+        <div className="page-title">Dashboard</div>
+        <div className="page-sub">Welcome back, Admin — here's what's happening today.</div>
       </div>
 
-      {/* Recent orders table */}
-      <div className="recent-card">
-        <h6 className="recent-title">Recent Orders</h6>
-        {recent.length === 0 ? (
-          <p className="text-muted text-center py-3">No orders yet.</p>
-        ) : (
-          <table className="table table-sm mb-0">
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Items</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Payment</th>
-              </tr>
-            </thead>
-            <tbody>
+      {/* Stats */}
+      <div className="dash-stats-grid">
+        <StatCard icon="currency-rupee"  label="Total Revenue"  value={`₹${totalRevenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`} color="#fc8019" sub="From paid orders" trend={12} />
+        <StatCard icon="bag-check"       label="Total Orders"   value={orders.length}  color="#3b82f6" sub={`${delivered} delivered`} trend={8} />
+        <StatCard icon="clock-history"   label="Active Orders"  value={pending}        color="#f59e0b" sub="Needs attention" />
+        <StatCard icon="egg-fried"       label="Menu Items"     value={foodCount}      color="#22c55e" sub="On the menu" />
+      </div>
+
+      <div className="dash-bottom-grid">
+        {/* Recent Orders */}
+        <div className="card-modern dash-orders-card">
+          <div className="dash-card-header">
+            <span className="dash-card-title">Recent Orders</span>
+            <span className="dash-card-count">{recent.length} orders</span>
+          </div>
+          {recent.length === 0 ? (
+            <div className="dash-empty">
+              <i className="bi bi-inbox"></i>
+              <p>No orders yet</p>
+            </div>
+          ) : (
+            <div className="dash-order-list">
               {recent.map((order, i) => (
-                <tr key={i}>
-                  <td className="text-muted" style={{ fontFamily: 'monospace', fontSize: '0.75rem' }}>
-                    #{order.id?.slice(-8).toUpperCase()}
-                  </td>
-                  <td style={{ fontSize: '0.82rem' }}>
-                    {order.orderedItems?.map(it => it.name).join(', ')}
-                  </td>
-                  <td style={{ fontWeight: 700 }}>₹{order.amount?.toFixed(0)}</td>
-                  <td>
-                    <span className={`dash-badge status-${order.orderStatus?.toLowerCase().replace(/\s/g, '-')}`}>
+                <div key={i} className="dash-order-row">
+                  <div className="dash-order-icon">
+                    <i className="bi bi-bag-fill"></i>
+                  </div>
+                  <div className="dash-order-info">
+                    <div className="dash-order-id">#{order.id?.slice(-8).toUpperCase()}</div>
+                    <div className="dash-order-items">
+                      {order.orderedItems?.slice(0, 2).map(it => it.name).join(', ')}
+                      {order.orderedItems?.length > 2 && ` +${order.orderedItems.length - 2}`}
+                    </div>
+                  </div>
+                  <div className="dash-order-right">
+                    <div className="dash-order-amount">₹{order.amount?.toFixed(0)}</div>
+                    <span className={`badge-status ${statusClass(order.orderStatus)}`}>
                       {order.orderStatus || 'Pending'}
                     </span>
-                  </td>
-                  <td>
-                    <span className={`dash-badge ${order.paymentStatus === 'Paid' ? 'paid' : 'unpaid'}`}>
-                      {order.paymentStatus}
-                    </span>
-                  </td>
-                </tr>
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
-        )}
+            </div>
+          )}
+        </div>
+
+        {/* Quick stats panel */}
+        <div className="card-modern dash-quick-card">
+          <div className="dash-card-header">
+            <span className="dash-card-title">Order Breakdown</span>
+          </div>
+          <div className="dash-breakdown">
+            {[
+              { label: 'Delivered',       count: delivered,                                  color: '#22c55e' },
+              { label: 'Active',          count: pending,                                    color: '#f59e0b' },
+              { label: 'Cancelled',       count: orders.filter(o => o.orderStatus === 'Cancelled').length, color: '#ef4444' },
+              { label: 'Paid',            count: orders.filter(o => o.paymentStatus === 'Paid').length,    color: '#3b82f6' },
+            ].map(({ label, count, color }) => (
+              <div key={label} className="dash-breakdown-row">
+                <div className="dash-breakdown-dot" style={{ background: color }}></div>
+                <span className="dash-breakdown-label">{label}</span>
+                <span className="dash-breakdown-count">{count}</span>
+                <div className="dash-breakdown-bar-wrap">
+                  <div
+                    className="dash-breakdown-bar"
+                    style={{
+                      width: orders.length ? `${(count / orders.length) * 100}%` : '0%',
+                      background: color,
+                    }}
+                  ></div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="dash-revenue-box">
+            <div className="dash-revenue-label">Total Revenue</div>
+            <div className="dash-revenue-value">
+              ₹{totalRevenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+            </div>
+            <div className="dash-revenue-sub">From {orders.filter(o => o.paymentStatus === 'Paid').length} paid orders</div>
+          </div>
+        </div>
       </div>
     </div>
   );

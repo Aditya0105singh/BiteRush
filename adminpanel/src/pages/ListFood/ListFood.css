@@ -1,3 +1,144 @@
-.table td {
-    vertical-align: middle;
+.lf-loading, .lf-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  gap: 10px;
+  color: var(--text-muted);
 }
+
+.lf-empty i { font-size: 2rem; }
+.lf-empty p { font-size: 0.875rem; }
+
+.lf-header-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.cat-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.08);
+  border-radius: 20px;
+  font-size: 0.65rem;
+  min-width: 18px;
+  height: 16px;
+  padding: 0 5px;
+  margin-left: 5px;
+  font-weight: 700;
+}
+
+.cat-tab.active .cat-count { background: rgba(255,255,255,0.25); }
+
+/* ── Food Grid ── */
+.lf-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.lf-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.lf-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.lf-img-wrap {
+  position: relative;
+  height: 160px;
+  overflow: hidden;
+}
+
+.lf-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.lf-card:hover .lf-img { transform: scale(1.04); }
+
+.lf-cat-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 20px;
+  backdrop-filter: blur(4px);
+}
+
+.lf-body { padding: 14px; }
+
+.lf-name {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+
+.lf-desc {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  min-height: 2.2em;
+}
+
+.lf-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.lf-price {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--brand);
+}
+
+.lf-delete-btn {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  border: 1px solid #fee2e2;
+  background: #fef2f2;
+  color: #ef4444;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem;
+  transition: all 0.15s;
+}
+
+.lf-delete-btn:hover:not(:disabled) {
+  background: #ef4444;
+  color: #fff;
+  border-color: #ef4444;
+}
+
+.lf-delete-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+@media (max-width: 1200px) { .lf-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 900px)  { .lf-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 500px)  { .lf-grid { grid-template-columns: 1fr; } }
