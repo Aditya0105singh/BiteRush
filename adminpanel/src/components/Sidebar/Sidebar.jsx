@@ -19,7 +19,9 @@ const Sidebar = ({ open }) => {
   return (
     <aside className={`admin-sidebar${open ? '' : ' collapsed'}`}>
       <div className="sidebar-brand">
-        <img src={assets.logo} alt="BiteRush" />
+        <div className="sidebar-brand-icon">
+          <i className="bi bi-lightning-charge-fill"></i>
+        </div>
         <span>BiteRush</span>
       </div>
 
