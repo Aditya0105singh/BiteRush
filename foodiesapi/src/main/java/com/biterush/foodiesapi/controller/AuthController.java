@@ -10,7 +10,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -44,20 +47,22 @@ public class AuthController {
 
     @PostMapping("/auth/google")
     @Operation(summary = "Google Login", description = "Verify a Google ID token, create account if new, and return a JWT.")
-    @SuppressWarnings("unchecked")
     public AuthenticationResponse googleLogin(@RequestBody GoogleAuthRequest request) {
         String url = "https://oauth2.googleapis.com/tokeninfo?id_token=" + request.getToken();
-        Map<String, String> googleData;
+        Map<String, Object> googleData;
         try {
-            googleData = restTemplate.getForObject(url, Map.class);
+            ResponseEntity<Map<String, Object>> resp = restTemplate.exchange(
+                    url, HttpMethod.GET, null,
+                    new ParameterizedTypeReference<Map<String, Object>>() {});
+            googleData = resp.getBody();
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid Google token");
         }
         if (googleData == null || googleData.get("email") == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid Google token");
         }
-        String email = googleData.get("email");
-        String name = googleData.getOrDefault("name", email.split("@")[0]);
+        String email = (String) googleData.get("email");
+        String name = googleData.containsKey("name") ? (String) googleData.get("name") : email.split("@")[0];
 
         userService.findOrCreateGoogleUser(email, name);
 
