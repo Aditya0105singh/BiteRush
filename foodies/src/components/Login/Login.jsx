@@ -30,10 +30,13 @@ const Login = () => {
         navigate("/");
       }
     } catch (err) {
+      console.error("Google login error:", err?.response?.status, err?.code, err?.message);
       if (err?.code === "ECONNABORTED" || !err?.response?.status) {
         toast.error("Server is starting up — wait 30 seconds and try again.");
+      } else if (err?.response?.status === 401) {
+        toast.error("Google token rejected by server. Try again.");
       } else {
-        toast.error("Google login failed. Please try again.");
+        toast.error(`Google login failed (${err?.response?.status || err?.code || "unknown"}). Check console.`);
       }
     } finally {
       setLoading(false);
